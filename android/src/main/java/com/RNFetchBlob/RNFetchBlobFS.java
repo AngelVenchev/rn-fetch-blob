@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.util.Base64;
 
 import com.RNFetchBlob.Utils.PathResolver;
+import com.RNFetchBlob.Utils.FsListener;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
@@ -19,6 +20,9 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+
+import org.apache.commons.io.input.Tailer;
+import org.apache.commons.io.input.TailerListenerAdapter;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -30,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-class RNFetchBlobFS {
+public class RNFetchBlobFS {
 
     private ReactApplicationContext mCtx;
     private DeviceEventManagerModule.RCTDeviceEventEmitter emitter;
@@ -384,6 +388,35 @@ class RNFetchBlobFS {
                     "EUNSPECIFIED",
                     "Failed to convert data to " + encoding + " encoded string. This might be because this encoding cannot be used for this data."
             );
+            err.printStackTrace();
+        }
+    }
+
+    /**
+     * Create a file stream for read
+     * @param path  File stream target path
+     * @param encoding  File stream decoder, should be one of `base64`, `utf8`, `ascii`
+     * @param bufferSize    Buffer size of read stream, default to 4096 (4095 when encode is `base64`)
+     */
+    void readStreamTailF(String path, String encoding, int bufferSize, int tick, final String streamId) {
+        String resolved = normalizePath(path);
+        if(resolved != null)
+            path = resolved;
+
+        try {
+
+            int chunkSize = encoding.equalsIgnoreCase("base64") ? 4095 : 4096;
+            if (bufferSize > 0)
+                chunkSize = bufferSize;
+
+            FsListener listener = new FsListener(this, streamId);
+            Tailer tailer = new Tailer(new File(path), listener, 10);
+            Thread thread = new Thread(tailer);
+            thread.start();
+
+        } catch (Exception err) {
+            emitStreamEvent(streamId, "warn", "Failed to convert data to " + encoding
+                    + " encoded string, this might due to the source data is not able to convert using this encoding.");
             err.printStackTrace();
         }
     }
@@ -1042,7 +1075,7 @@ class RNFetchBlobFS {
      * @param event Event name, `data`, `end`, `error`, etc.
      * @param data  Event data
      */
-    private void emitStreamEvent(String streamName, String event, String data) {
+    public void emitStreamEvent(String streamName, String event, String data) {
         WritableMap eventData = Arguments.createMap();
         eventData.putString("event", event);
         eventData.putString("detail", data);

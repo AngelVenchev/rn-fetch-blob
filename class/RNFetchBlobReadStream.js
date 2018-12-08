@@ -64,7 +64,14 @@ export default class RNFetchBlobReadStream {
     if(!this.closed)
       RNFetchBlob.readStream(this.path, this.encoding, this.bufferSize || 10240 , this.tick || -1, this.streamId)
     else
-      throw new Error('Stream closed')
+      throw new Error('Stream closed');
+  }
+
+  openTailF() {
+    if(!this.closed)
+      RNFetchBlob.readStreamTailF(this.path, this.encoding, this.bufferSize || 10240 , this.tick || -1, this.streamId)
+    else
+      throw new Error('Stream closed');
   }
 
   onData(fn:() => void) {
