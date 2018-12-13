@@ -21,8 +21,7 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-import org.apache.commons.io.input.Tailer;
-import org.apache.commons.io.input.TailerListenerAdapter;
+import com.RNFetchBlob.Tailer.Tailer;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -392,25 +391,15 @@ public class RNFetchBlobFS {
         }
     }
 
-    /**
-     * Create a file stream for read
-     * @param path  File stream target path
-     * @param encoding  File stream decoder, should be one of `base64`, `utf8`, `ascii`
-     * @param bufferSize    Buffer size of read stream, default to 4096 (4095 when encode is `base64`)
-     */
     void readStreamTailF(String path, String encoding, int bufferSize, int tick, final String streamId) {
-        String resolved = normalizePath(path);
+        String normalizedPath = path;
+        String resolved = RNFetchBlobFS.normalizePath(path);
         if(resolved != null)
-            path = resolved;
+            normalizedPath = resolved;
 
         try {
-
-            int chunkSize = encoding.equalsIgnoreCase("base64") ? 4095 : 4096;
-            if (bufferSize > 0)
-                chunkSize = bufferSize;
-
             FsListener listener = new FsListener(this, streamId);
-            Tailer tailer = new Tailer(new File(path), listener, 10);
+            Tailer tailer = new Tailer(new File(normalizedPath), listener, tick, false, bufferSize);
             Thread thread = new Thread(tailer);
             thread.start();
 
@@ -692,7 +681,7 @@ public class RNFetchBlobFS {
     /**
      * List content of folder
      * @param path Target folder
-     * @param callback  JS context callback
+     * @param promise  JS context callback
      */
     static void ls(String path, Promise promise) {
         try {

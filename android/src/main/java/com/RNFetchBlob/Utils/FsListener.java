@@ -3,7 +3,7 @@ package com.RNFetchBlob.Utils;
 import android.util.Base64;
 import com.RNFetchBlob.RNFetchBlobFS;
 
-import org.apache.commons.io.input.TailerListenerAdapter;
+import com.RNFetchBlob.Tailer.TailerListenerAdapter;
 
 public class FsListener extends TailerListenerAdapter {
     private RNFetchBlobFS fs;
@@ -15,14 +15,13 @@ public class FsListener extends TailerListenerAdapter {
         this.streamId = streamId;
     }
 
-    public void handle(String buffer) {
+    public void handle(byte[] buffer) {
         // copy to a readable byte array
-        byte [] bufferBytes = buffer.getBytes();
-        byte [] copy = new byte[bufferBytes.length];
-        for(int i =0; i < bufferBytes.length; i++) {
-            copy[i] = bufferBytes[i];
+        byte [] copy = new byte[buffer.length];
+        for(int i =0; i < buffer.length; i++) {
+            copy[i] = buffer[i];
         }
-        
+
         // send the base64 encoded data to the JS context
         this.fs.emitStreamEvent(this.streamId, "data", Base64.encodeToString(copy, Base64.NO_WRAP));
     }
