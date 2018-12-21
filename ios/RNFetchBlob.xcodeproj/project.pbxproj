@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3078578B21CD22BB005BC4FE /* RNFetchBlobFileTailer.m in Sources */ = {isa = PBXBuildFile; fileRef = 3078578921CD22BA005BC4FE /* RNFetchBlobFileTailer.m */; };
 		8C4801A6200CF71700FED7ED /* RNFetchBlobRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C4801A5200CF71700FED7ED /* RNFetchBlobRequest.m */; };
 		A158F4271D052E49006FFD38 /* RNFetchBlobFS.m in Sources */ = {isa = PBXBuildFile; fileRef = A158F4261D052E49006FFD38 /* RNFetchBlobFS.m */; };
 		A158F42D1D0535BB006FFD38 /* RNFetchBlobConst.m in Sources */ = {isa = PBXBuildFile; fileRef = A158F42C1D0535BB006FFD38 /* RNFetchBlobConst.m */; };
@@ -30,6 +31,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3078578921CD22BA005BC4FE /* RNFetchBlobFileTailer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNFetchBlobFileTailer.m; sourceTree = "<group>"; };
+		3078578A21CD22BB005BC4FE /* RNFetchBlobFileTailer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNFetchBlobFileTailer.h; sourceTree = "<group>"; };
 		8C4801A4200CF71700FED7ED /* RNFetchBlobRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNFetchBlobRequest.h; sourceTree = "<group>"; };
 		8C4801A5200CF71700FED7ED /* RNFetchBlobRequest.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNFetchBlobRequest.m; sourceTree = "<group>"; };
 		A158F4261D052E49006FFD38 /* RNFetchBlobFS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNFetchBlobFS.m; sourceTree = "<group>"; };
@@ -69,6 +72,8 @@
 		A15C30051CD25C330074CB35 = {
 			isa = PBXGroup;
 			children = (
+				3078578A21CD22BB005BC4FE /* RNFetchBlobFileTailer.h */,
+				3078578921CD22BA005BC4FE /* RNFetchBlobFileTailer.m */,
 				A19B48241D98102400E6868A /* RNFetchBlobProgress.m */,
 				A19B48231D98100800E6868A /* RNFetchBlobProgress.h */,
 				A1F950181D7E9134002A95A6 /* IOS7Polyfill.h */,
@@ -156,6 +161,7 @@
 				A166D1AA1CE0647A00273590 /* RNFetchBlob.h in Sources */,
 				8C4801A6200CF71700FED7ED /* RNFetchBlobRequest.m in Sources */,
 				A158F42D1D0535BB006FFD38 /* RNFetchBlobConst.m in Sources */,
+				3078578B21CD22BB005BC4FE /* RNFetchBlobFileTailer.m in Sources */,
 				A158F4271D052E49006FFD38 /* RNFetchBlobFS.m in Sources */,
 				A158F4301D0539DB006FFD38 /* RNFetchBlobNetwork.m in Sources */,
 				A19B48251D98102400E6868A /* RNFetchBlobProgress.m in Sources */,

@@ -11,6 +11,7 @@
 #import "RNFetchBlobFS.h"
 #import "RNFetchBlobConst.h"
 #import "IOS7Polyfill.h"
+#import "RNFetchBlobFileTailer.h"
 @import AssetsLibrary;
 
 #import <CommonCrypto/CommonDigest.h>
@@ -221,6 +222,77 @@ NSMutableDictionary *fileStreams = nil;
     }];
 
 
+}
+
+#pragma margk - readStreamTailF
+
++ (void) readStreamTailf:(NSString *)uri
+                encoding:(NSString * )encoding
+              bufferSize:(int)bufferSize
+                    tick:(int)tick
+                streamId:(NSString *)streamId
+               bridgeRef:(RCTBridge *)bridgeRef
+{
+    [[self class] getPathFromUri:uri completionHandler:^(NSString *path, ALAssetRepresentation *asset) {
+
+        __block RCTEventDispatcher * event = bridgeRef.eventDispatcher;
+        __block int read = 0;
+        __block int backoff = tick *1000;
+        __block int chunkSize = bufferSize;
+        // allocate buffer in heap instead of stack
+        uint8_t * buffer;
+        @try
+        {
+            buffer = (uint8_t *) malloc(bufferSize);
+            if(path != nil)
+            {
+                if([[NSFileManager defaultManager] fileExistsAtPath:path] == NO)
+                {
+                    NSString * message = [NSString stringWithFormat:@"File does not exist at path %@", path];
+                    NSDictionary * payload = @{ @"event": FS_EVENT_ERROR, @"code": @"ENOENT", @"detail": message };
+                    [event sendDeviceEventWithName:streamId body:payload];
+                    free(buffer);
+                    return ;
+                }
+
+                int currentPositionInBuffer = 0;
+                RNFetchBlobFileTailer *tail = [[[FileTailer alloc] initWithStream:in refreshPeriod:3.0] autorelease];
+                [tail readIndefinitely:^ void (int byte) {
+                    buffer[currentPositionInBuffer] = byte
+                    currentPositionInBuffer++;
+                    if(currentPositionInBuffer == bufferSize) {
+                        [[self class] emitDataChunks:[NSData dataWithBytes:buffer length:bufferSize] encoding:encoding streamId:streamId event:event];
+                        if(tick > 0)
+                        {
+                            usleep(backoff);
+                        }
+                        currentPositionInBuffer = 0;
+                    }
+                    // EXTRA track a global flag to be able to cancel
+                }];
+            }
+            else
+            {
+                NSDictionary * payload = @{ @"event": FS_EVENT_ERROR, @"code": @"EINVAL", @"detail": @"Unable to resolve URI" };
+                [event sendDeviceEventWithName:streamId body:payload];
+            }
+            // release buffer
+            if(buffer != nil)
+                free(buffer);
+
+        }
+        @catch (NSError * err)
+        {
+            NSDictionary * payload = @{ @"event": FS_EVENT_ERROR, @"code": @"EUNSPECIFIED", @"detail": [err description] };
+            [event sendDeviceEventWithName:streamId body:payload];
+        }
+        @finally
+        {
+            NSDictionary * payload = @{ @"event": FS_EVENT_END, @"detail": @"" };
+            [event sendDeviceEventWithName:streamId body:payload];
+        }
+
+    }];
 }
 
 // send read stream chunks via native event emitter

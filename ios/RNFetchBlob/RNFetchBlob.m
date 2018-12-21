@@ -518,6 +518,21 @@ RCT_EXPORT_METHOD(readStream:(NSString *)path withEncoding:(NSString *)encoding 
     });
 }
 
+#pragma mark - fs.readStreamTailf
+RCT_EXPORT_METHOD(readStreamTailf:(NSString *)path withEncoding:(NSString *)encoding bufferSize:(int)bufferSize tick:(int)tick streamId:(NSString *)streamId)
+{
+    if(bufferSize == nil) {
+        if([[encoding lowercaseString] isEqualToString:@"base64"])
+            bufferSize = 4095;
+        else
+            bufferSize = 4096;
+    }
+
+    dispatch_async(fsQueue, ^{
+        [RNFetchBlobFS readStreamTailf:path encoding:encoding bufferSize:bufferSize tick:tick streamId:streamId bridgeRef:_bridge];
+    });
+}
+
 #pragma mark - fs.getEnvionmentDirs
 RCT_EXPORT_METHOD(getEnvironmentDirs:(RCTResponseSenderBlock) callback)
 {

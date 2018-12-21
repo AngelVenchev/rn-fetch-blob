@@ -19,7 +19,7 @@
 #import <React/RCTEventDispatcher.h>
 #import <React/RCTBridgeModule.h>
 #else
-#import "RCTBridgeModule.h"
+#import <React/RCTBridgeModule.h>
 #import "RCTLog.h"
 #import "RCTRootView.h"
 #import "RCTBridge.h"
