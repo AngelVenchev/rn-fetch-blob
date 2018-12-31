@@ -518,8 +518,8 @@ RCT_EXPORT_METHOD(readStream:(NSString *)path withEncoding:(NSString *)encoding 
     });
 }
 
-#pragma mark - fs.readStreamTailf
-RCT_EXPORT_METHOD(readStreamTailf:(NSString *)path withEncoding:(NSString *)encoding bufferSize:(int)bufferSize tick:(int)tick streamId:(NSString *)streamId)
+#pragma mark - fs.readStreamTailF
+RCT_EXPORT_METHOD(readStreamTailF:(NSString *)path withEncoding:(NSString *)encoding bufferSize:(int)bufferSize tick:(int)tick streamId:(NSString *)streamId)
 {
     if(bufferSize == nil) {
         if([[encoding lowercaseString] isEqualToString:@"base64"])
@@ -529,7 +529,7 @@ RCT_EXPORT_METHOD(readStreamTailf:(NSString *)path withEncoding:(NSString *)enco
     }
 
     dispatch_async(fsQueue, ^{
-        [RNFetchBlobFS readStreamTailf:path encoding:encoding bufferSize:bufferSize tick:tick streamId:streamId bridgeRef:_bridge];
+        [RNFetchBlobFS readStreamTailF:path encoding:encoding bufferSize:bufferSize tick:tick streamId:streamId bridgeRef:self->_bridge];
     });
 }
 
@@ -646,8 +646,5 @@ RCT_EXPORT_METHOD(emitExpiredEvent:(RCTResponseSenderBlock)callback)
 {
     [RNFetchBlobNetwork emitExpiredTasks];
 }
-
-
-
 
 @end

@@ -226,7 +226,7 @@ NSMutableDictionary *fileStreams = nil;
 
 #pragma margk - readStreamTailF
 
-+ (void) readStreamTailf:(NSString *)uri
++ (void) readStreamTailF:(NSString *)uri
                 encoding:(NSString * )encoding
               bufferSize:(int)bufferSize
                     tick:(int)tick
@@ -255,10 +255,11 @@ NSMutableDictionary *fileStreams = nil;
                     return ;
                 }
 
-                int currentPositionInBuffer = 0;
-                RNFetchBlobFileTailer *tail = [[[FileTailer alloc] initWithStream:in refreshPeriod:3.0] autorelease];
+                __block int currentPositionInBuffer = 0;
+                NSInputStream * in = [NSInputStream inputStreamWithFileAtPath:path];
+                RNFetchBlobFileTailer *tail = [[RNFetchBlobFileTailer alloc] initWithStream:(__bridge FILE *)(in) refreshPeriod:1.0];
                 [tail readIndefinitely:^ void (int byte) {
-                    buffer[currentPositionInBuffer] = byte
+                    buffer[currentPositionInBuffer] = byte;
                     currentPositionInBuffer++;
                     if(currentPositionInBuffer == bufferSize) {
                         [[self class] emitDataChunks:[NSData dataWithBytes:buffer length:bufferSize] encoding:encoding streamId:streamId event:event];
